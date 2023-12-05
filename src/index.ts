@@ -2,7 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import 'dotenv/config'
-import { DataTypes, Sequelize } from "sequelize"
+import { DataTypes, Model, Sequelize } from "sequelize"
 import { errorMonitor } from 'stream'
 
 let app = express();
@@ -153,7 +153,22 @@ app.get('http://localhost:3333/freegames/:name', async(req, res) => {
 //modifier un jeu gratuit
 app.put('http://localhost:3333/freegames/:name', async(req, res) => {
   try {
-
+    const gameToModify = await FreeGames.findOne({where :{name: req.params.name}});
+    if (gameToModify === null) {
+      res.status(404);
+    } else if (gameToModify !== null && req.body.description) {
+      await User.update({description: req.body.description}, {
+        where: {name: req.params.name}
+      })
+    } else if (gameToModify !== null && req.body.urlimage) {
+      await User.update({urlimage: req.body.urlimage}, {
+        where: {name: req.params.name}
+      })
+    } else if (gameToModify !== null && req.body.name) {
+      await User.update({name: req.body.name}, {
+        where: {name: req.params.name}
+      })
+    } 
   } catch (error) {
     console.error('Erreur modification jeu gratuit', error);
   }
