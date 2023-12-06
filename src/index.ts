@@ -10,18 +10,13 @@ app.use(cors());
 app.use(bodyParser.json());
 const port = parseInt(process.env.PORT as string);
 
-// const username = process.env.USERNAME as string;
-// const password = process.env.PASSWORD as string;
-// const database = process.env.DATABASE as string;
-// const server = process.env.SERVER as string;
-
 const sequelize = new Sequelize({
   dialect: 'sqlite',
   storage: './db.sqlite',
 });
 
 const User = sequelize.define('User', {
-  username: {
+  id: {
     type: DataTypes.STRING,
     allowNull: false,
     unique: true
@@ -78,7 +73,7 @@ FreeGames.sync({force: true})
 OfficialGames.sync({force: true})
 
 interface IRequestUserBody {
-  name: string,
+  id: number,
   email: string,
   password: string
 }
@@ -151,26 +146,109 @@ app.get('http://localhost:3333/freegames/:name', async(req, res) => {
 })
 
 //modifier un jeu gratuit
-app.put('http://localhost:3333/freegames/:name', async(req, res) => {
+app.put('http://localhost:3333/freegames/:id', async(req, res) => {
   try {
-    const gameToModify = await FreeGames.findOne({where :{name: req.params.name}});
+    const gameToModify = await FreeGames.findOne({where :{id: req.params.id}});
     if (gameToModify === null) {
-      res.status(404);
-    } else if (gameToModify !== null && req.body.description) {
-      await User.update({description: req.body.description}, {
-        where: {name: req.params.name}
+      res.status(400).json({message: 'Le jeu gratuit n\'existe pas'});
+    } else {
+      await FreeGames.update({
+        name: req.body.name,
+        description: req.body.description,
+        image: req.body.image,
+      }, {
+        where: {id: req.params.id}
       })
-    } else if (gameToModify !== null && req.body.urlimage) {
-      await User.update({urlimage: req.body.urlimage}, {
-        where: {name: req.params.name}
-      })
-    } else if (gameToModify !== null && req.body.name) {
-      await User.update({name: req.body.name}, {
-        where: {name: req.params.name}
-      })
+      res.status(200).json({message: 'Le jeu gratuit a été modifié'});
     } 
   } catch (error) {
-    console.error('Erreur modification jeu gratuit', error);
+    res.status(400).json({message: 'Erreur modification jeu gratuit', error});
+  }
+})
+
+// détruire un jeu gratuit
+app.delete('http://localhost:3333/freegames/:name', async(req, res) => {
+  try {
+    await FreeGames.destroy({
+    where: {
+      name: req.params.name
+    }
+  })
+  res.status(200).json({message: "Le jeu a été supprimé"})
+  } catch (error) {
+    res.status(400).json({message: 'Erreur suppression jeu', error})
+  }
+})
+
+// créer un jeu payant
+app.post('http://localhost:3333/officialgames/', async(req, res) => {
+  try {
+    let {name, description, urlimage, price} = req.body as IRequestOfficialGamesBody;
+  
+    const newOfficialGames = await FreeGames.create({
+      name,
+      description,
+      urlimage,
+      price
+    });
+    res.status(200).json(newOfficialGames);
+  } catch (error) {
+    console.error('Erreur création jeu payant', error)
+  }
+});
+
+// récupérer tous les jeux payants
+app.get('http://localhost:3333/officialgames/', async(_, res) => {
+  try {
+    const allOfficialGames = await OfficialGames.findAll();
+    res.status(200).json(allOfficialGames);
+  } catch (error) {
+    console.error('Erreur récupération jeux payants', error);
+  }
+});
+
+// récupérer un jeu payant
+app.get('http://localhost:3333/officialgames/:name', async(req, res) => {
+  try {
+    const oneOfficialGames = await OfficialGames.findOne({where: {name: req.params.name}});
+    res.status(200).json(oneOfficialGames)
+  } catch (error) {
+    console.error('Erreur récupération jeu payant par nom', error)
+  }
+})
+
+// modifier un jeu payant
+app.put('http://localhost:3333/officialgames/:id', async(req, res) => {
+  try {
+    const gameToModify = await OfficialGames.findOne({where :{id: req.params.id}});
+    if (gameToModify === null) {
+      res.status(400).json({message: 'Le jeu payant n\'existe pas'});
+    } else {
+      await OfficialGames.update({
+        name: req.body.name,
+        description: req.body.description,
+        image: req.body.image,
+      }, {
+        where: {id: req.params.id}
+      })
+      res.status(200).json({message: 'Le jeu payant a été modifié'});
+    } 
+  } catch (error) {
+    res.status(400).json({message: 'Erreur modification jeu payant', error});
+  }
+})
+
+// supprimer un jeu payant
+app.delete('http://localhost:3333/officialgames/:name', async(req, res) => {
+  try {
+    await OfficialGames.destroy({
+      where: {
+        name: req.params.name
+      }
+    })
+  res.status(200).json({message: "Le jeu a été supprimé"})
+  } catch (error) {
+    res.status(400).json({message: 'Erreur suppression jeu', error})
   }
 })
 
