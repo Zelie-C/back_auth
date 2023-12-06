@@ -3,7 +3,8 @@ import cors from 'cors'
 import bodyParser from 'body-parser'
 import 'dotenv/config'
 import { DataTypes, Model, Sequelize } from "sequelize"
-import { errorMonitor } from 'stream'
+import bcrypt, { hash } from 'bcrypt'
+import jwt from 'jsonwebtoken'
 
 let app = express();
 app.use(cors());
@@ -16,7 +17,7 @@ const sequelize = new Sequelize({
 });
 
 const User = sequelize.define('User', {
-  id: {
+  username: {
     type: DataTypes.STRING,
     allowNull: false,
     unique: true
@@ -73,7 +74,7 @@ FreeGames.sync({force: true})
 OfficialGames.sync({force: true})
 
 interface IRequestUserBody {
-  id: number,
+  username: number,
   email: string,
   password: string
 }
@@ -91,6 +92,7 @@ interface IRequestOfficialGamesBody {
   price: number
 }
 
+// route création utilisateur
 app.post('/users/register', async(req, res) => {
   const usernameReq = req.body.username;
   const emailReq = req.body.email;
@@ -98,16 +100,41 @@ app.post('/users/register', async(req, res) => {
 
   const uniqueMail = await User.findOne({ where: {email: emailReq}});
   if (uniqueMail === null) {
+    const saltRounds = 10;
+    const hash = await bcrypt.hash(passwordReq, saltRounds)
+
     await User.create({
       usernameReq,
       emailReq,
-      passwordReq
+      hash
     })
     res.status(200)
   } else {
     return res.status(400)
   }
 })
+
+// route connexion utilisateur
+app.post('/users/auth/', async(req, res) => {
+  const {email, password} = req.body as IRequestUserBody;
+
+  const user = await User.findOne({where: {email}})
+
+  if (user === null) {
+    return res.status(400).json({message: "Le couple email/mot de passe est invalide"})
+  } else if (user !== null) {
+    // @ts-ignore
+    const passwordVerification = await bcrypt.compare(password, user.password);
+      if (!passwordVerification) {
+        return res.status(401)
+      } else {
+        //@ts-ignore
+        const token = jwt.sign({email: user.email, password: user.password}, process.env.JWT_SECRET_KEY, {expiresIn: '1h'});
+        return res.status(200).json({token});
+      };
+  }
+  }
+)
 
 // créer un nouveau jeu gratuit
 app.post('http://localhost:3333/freegames/', async(req, res) => {
