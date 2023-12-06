@@ -203,7 +203,7 @@ app.get('https://localhost:3333/users/', authentificateToken, async(req, res) =>
 
 // changement mot de passe
 app.put('http://localhost:3333/users/change-password', authentificateToken, async(req, res) => {
-  const userPassword = req.body.password
+
   const newUserPassword = req.body.newPassword
 
   //@ts-ignore
@@ -219,6 +219,7 @@ app.put('http://localhost:3333/users/change-password', authentificateToken, asyn
   } catch (error) {
     res.status(400).json({message: "l'utilisateur n'a pas été trouvé"})
   }
+  
   try {
     //@ts-ignore
     await user.update({
