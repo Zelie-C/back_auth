@@ -182,7 +182,7 @@ app.delete('http://localhost:3333/users/logout', authentificateToken, async (req
     )
     res.status(200).json({message: "le token a été supprimé"})
   } catch (error) {
-    res.status(400).json({message: ""})
+    res.status(400).json({message: "le token n'a pas pu être supprimé"})
   }
 
 })
@@ -203,10 +203,31 @@ app.get('https://localhost:3333/users/', authentificateToken, async(req, res) =>
 
 // changement mot de passe
 app.put('http://localhost:3333/users/change-password', authentificateToken, async(req, res) => {
-  //@ts-ignore
-  const user = req.user
-  
+  const userPassword = req.body.password
+  const newUserPassword = req.body.newPassword
 
+  //@ts-ignore
+  const { email } = req.user.email
+  
+  try {
+    const user = User.findOne({
+      where: {
+        email
+      }
+    })
+    res.status(200)
+  } catch (error) {
+    res.status(400).json({message: "l'utilisateur n'a pas été trouvé"})
+  }
+  try {
+    //@ts-ignore
+    await user.update({
+      password: newUserPassword
+    })
+    res.status(200).json({message: "le mot de passe a été mis à jour"})
+  } catch (error) {
+    res.status(400).json({message: 'le mot de passe n\'a pas pu être modifié'})
+  }
 })
 
 // créer un nouveau jeu gratuit
