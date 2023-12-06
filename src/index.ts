@@ -126,7 +126,7 @@ app.post('/users/auth/', async(req, res) => {
     // @ts-ignore
     const passwordVerification = await bcrypt.compare(password, user.password);
       if (!passwordVerification) {
-        return res.status(401)
+        return res.status(400).json({message: "Le couple email/mot de passe est invalide"})
       } else {
         //@ts-ignore
         const token = jwt.sign({email: user.email, password: user.password}, process.env.JWT_SECRET_KEY, {expiresIn: '1h'});
