@@ -11,6 +11,23 @@ app.use(cors());
 app.use(bodyParser.json());
 const port = parseInt(process.env.PORT as string);
 
+const authentificateToken = (req: any, res: any, next: any) => {
+  const tokenHeader = req.headers.authorization
+  const token = tokenHeader && tokenHeader.split(' ')[1]
+
+  if (token === null) {
+    return res.status(400).json({message: 'Token inexistant'})
+  }
+
+  jwt.verify(tokenHeader, process.env.JWT_TOKEN_KEY as string, (err: any, user: any) => {
+    if (err) {
+      return res.status(401)
+    }
+    req.user = user;
+    next()
+  })
+}
+
 const sequelize = new Sequelize({
   dialect: 'sqlite',
   storage: './db.sqlite',
@@ -129,7 +146,7 @@ app.post('/users/auth/', async(req, res) => {
         return res.status(400).json({message: "Le couple email/mot de passe est invalide"})
       } else {
         //@ts-ignore
-        const token = jwt.sign({email: user.email, password: user.password}, process.env.JWT_SECRET_KEY, {expiresIn: '1h'});
+        const token = jwt.sign({username: user.username, email: user.email}, process.env.JWT_SECRET_KEY as string, {expiresIn: '1h'});
         return res.status(200).json({token});
       };
   }
@@ -173,7 +190,7 @@ app.get('http://localhost:3333/freegames/:name', async(req, res) => {
 })
 
 //modifier un jeu gratuit
-app.put('http://localhost:3333/freegames/:id', async(req, res) => {
+app.put('http://localhost:3333/freegames/:id', authentificateToken, async(req, res) => {
   try {
     const gameToModify = await FreeGames.findOne({where :{id: req.params.id}});
     if (gameToModify === null) {
@@ -194,7 +211,7 @@ app.put('http://localhost:3333/freegames/:id', async(req, res) => {
 })
 
 // détruire un jeu gratuit
-app.delete('http://localhost:3333/freegames/:name', async(req, res) => {
+app.delete('http://localhost:3333/freegames/:name', authentificateToken, async(req, res) => {
   try {
     await FreeGames.destroy({
     where: {
@@ -208,7 +225,7 @@ app.delete('http://localhost:3333/freegames/:name', async(req, res) => {
 })
 
 // créer un jeu payant
-app.post('http://localhost:3333/officialgames/', async(req, res) => {
+app.post('http://localhost:3333/officialgames/', authentificateToken, async(req, res) => {
   try {
     let {name, description, urlimage, price} = req.body as IRequestOfficialGamesBody;
   
@@ -225,7 +242,7 @@ app.post('http://localhost:3333/officialgames/', async(req, res) => {
 });
 
 // récupérer tous les jeux payants
-app.get('http://localhost:3333/officialgames/', async(_, res) => {
+app.get('http://localhost:3333/officialgames/', authentificateToken, async(_, res) => {
   try {
     const allOfficialGames = await OfficialGames.findAll();
     res.status(200).json(allOfficialGames);
@@ -235,7 +252,7 @@ app.get('http://localhost:3333/officialgames/', async(_, res) => {
 });
 
 // récupérer un jeu payant
-app.get('http://localhost:3333/officialgames/:name', async(req, res) => {
+app.get('http://localhost:3333/officialgames/:name', authentificateToken, async(req, res) => {
   try {
     const oneOfficialGames = await OfficialGames.findOne({where: {name: req.params.name}});
     res.status(200).json(oneOfficialGames)
@@ -245,7 +262,7 @@ app.get('http://localhost:3333/officialgames/:name', async(req, res) => {
 })
 
 // modifier un jeu payant
-app.put('http://localhost:3333/officialgames/:id', async(req, res) => {
+app.put('http://localhost:3333/officialgames/:id', authentificateToken, async(req, res) => {
   try {
     const gameToModify = await OfficialGames.findOne({where :{id: req.params.id}});
     if (gameToModify === null) {
@@ -266,7 +283,7 @@ app.put('http://localhost:3333/officialgames/:id', async(req, res) => {
 })
 
 // supprimer un jeu payant
-app.delete('http://localhost:3333/officialgames/:name', async(req, res) => {
+app.delete('http://localhost:3333/officialgames/:name', authentificateToken, async(req, res) => {
   try {
     await OfficialGames.destroy({
       where: {
