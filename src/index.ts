@@ -13,13 +13,13 @@ const port = parseInt(process.env.PORT as string);
 
 const authentificateToken = (req: any, res: any, next: any) => {
   const tokenHeader = req.headers.authorization
-  const token = tokenHeader && tokenHeader.split(' ')[1]
+  const token = tokenHeader.split(' ')[1]
 
-  if (token === null) {
+  if (tokenHeader === null) {
     return res.status(400).json({message: 'Token inexistant'})
   }
 
-  jwt.verify(tokenHeader, process.env.JWT_TOKEN_KEY as string, (err: any, user: any) => {
+  jwt.verify(token, process.env.JWT_TOKEN_KEY as string, (err: any, user: any) => {
     if (err) {
       return res.status(401)
     }
@@ -86,9 +86,21 @@ const OfficialGames = sequelize.define('OfficialGames', {
   }
 })
 
-User.sync({force: true})
-FreeGames.sync({force: true})
-OfficialGames.sync({force: true})
+const Tokens = sequelize.define('Tokens', {
+  token: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  }
+})
+
+User.sync()
+//User.sync({force: true})
+FreeGames.sync()
+//FreeGames.sync({force: true})
+OfficialGames.sync()
+//OfficialGames.sync({force: true})
+Tokens.sync()
+//Tokens.sync({force: true})
 
 interface IRequestUserBody {
   username: number,
@@ -147,11 +159,55 @@ app.post('/users/auth/', async(req, res) => {
       } else {
         //@ts-ignore
         const token = jwt.sign({username: user.username, email: user.email}, process.env.JWT_SECRET_KEY as string, {expiresIn: '1h'});
+        await Tokens.create({
+          token
+        })
         return res.status(200).json({token});
       };
   }
   }
 )
+
+// route delete token
+app.delete('http://localhost:3333/users/logout', authentificateToken, async (req, res) => {
+  const tokenHeader = req.headers.authorization
+  const token = tokenHeader && tokenHeader.split(' ')[1]
+  try {
+    await Tokens.destroy(
+      {
+        where: {
+          token: token
+        }
+      }
+    )
+    res.status(200).json({message: "le token a été supprimé"})
+  } catch (error) {
+    res.status(400).json({message: ""})
+  }
+
+})
+
+// récupération des info user connecté
+app.get('https://localhost:3333/users/', authentificateToken, async(req, res) => {
+  
+  try {
+    //@ts-ignore  
+    const user = req.user;
+    res.status(200).json({message: "info", user})
+  } catch (error) {
+    console.error('Erreur récupération info utilisateurs', error);
+    res.status(400)
+  }
+  
+})
+
+// changement mot de passe
+app.put('http://localhost:3333/users/change-password', authentificateToken, async(req, res) => {
+  //@ts-ignore
+  const user = req.user
+  
+
+})
 
 // créer un nouveau jeu gratuit
 app.post('http://localhost:3333/freegames/', async(req, res) => {
