@@ -16,24 +16,26 @@ const authentificateToken = async (req: any, res: any, next: any) => {
   const tokenHeader = req.headers.authorization
   console.log('Token Header:', tokenHeader);
   if (!tokenHeader) {
-    return res.status(400).json({message: 'Token inexistant'})
+    res.status(400).json({message: 'Token inexistant'})
   }
-  const token = tokenHeader.split(' ')[1]
-  console.log('Token extrait:', token);
-  
-  try {
-    const decoded = jwt.verify(token, jwtSecretToken) as { email: string }
-    if (!decoded) {
-      res.status(401)
+  else {
+    const token = tokenHeader.split(' ')[1]
+    console.log('Token extrait:', token);
+    
+    try {
+      const decoded = jwt.verify(token, jwtSecretToken) as { email: string }
+      if (!decoded) {
+        res.status(401).json({message: "erreur"})
+      }
+      else {
+        const user = await User.findOne({where: {email: decoded.email}})
+        req.user = user;
+        next()
+      }
     }
-    else {
-      const user = await User.findOne({where: {email: decoded.email}})
-      req.user = user;
-      next()
+    catch(e){
+      res.status(401).json({message: "erreur"})
     }
-  }
-  catch(e){
-    res.status(401)
   }
 }
 
@@ -206,7 +208,8 @@ app.delete('http://localhost:3333/users/logout', authentificateToken, async (req
 })
 
 // récupération des info user connecté
-app.get('/api/users/me/', authentificateToken, async(req, res) => {
+app.get('/api/users/me', authentificateToken, async(req, res) => {
+  console.log("coucou");
   
   try {
     //@ts-ignore  
@@ -214,7 +217,7 @@ app.get('/api/users/me/', authentificateToken, async(req, res) => {
     res.status(200).json({message: "info", user})
   } catch (error) {
     console.error('Erreur récupération info utilisateurs', error);
-    res.status(400)
+    res.status(400).json({message: "erreur"})
   }
   
 })
