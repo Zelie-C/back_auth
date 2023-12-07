@@ -11,18 +11,19 @@ Content-Type: application/json
 POST http://localhost:3333/api/auth/local/
 Content-Type: application/json
 
+
 {
     "email": "ze.chemn@gmail.com",
     "password": "Azerty1234"
 }
 
 ###
-GET http://localhost:1337/api/users/me
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzAxNzczOTc2LCJleHAiOjE3MDQzNjU5NzZ9.jx2rWuj8xGnlOEYzP-8yQdRWrPeksRyzmDXJQimf41U
+GET http://localhost:3333/api/users/me/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InpjdHl1IiwiZW1haWwiOiJ6ZS5jaGVtbkBnbWFpbC5jb20iLCJpYXQiOjE3MDE5NTU1NzgsImV4cCI6MTcwMTk1OTE3OH0.wVi0p-1OIXM7QG_fbh6Hhe2Oz6TeNWyiVVUvhXcCu48
 
 ###
 POST http://localhost:1337/api/auth/forgot-password/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzAxNzczOTc2LCJleHAiOjE3MDQzNjU5NzZ9.jx2rWuj8xGnlOEYzP-8yQdRWrPeksRyzmDXJQimf41U
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InpjdHl1IiwiZW1haWwiOiJ6ZS5jaGVtbkBnbWFpbC5jb20iLCJpYXQiOjE3MDE5NTU1NzgsImV4cCI6MTcwMTk1OTE3OH0.wVi0p-1OIXM7QG_fbh6Hhe2Oz6TeNWyiVVUvhXcCu48
 Content-Type: application/json
 
 {
@@ -30,30 +31,28 @@ Content-Type: application/json
 }
 
 ###
-POST http://localhost:1337/api/free-games/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzAxNzczOTc2LCJleHAiOjE3MDQzNjU5NzZ9.jx2rWuj8xGnlOEYzP-8yQdRWrPeksRyzmDXJQimf41U
+POST http://localhost:3333/api/free-games/
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InpjdHl1IiwiZW1haWwiOiJ6ZS5jaGVtbkBnbWFpbC5jb20iLCJpYXQiOjE3MDE5NTU1NzgsImV4cCI6MTcwMTk1OTE3OH0.wVi0p-1OIXM7QG_fbh6Hhe2Oz6TeNWyiVVUvhXcCu48
 
 {
-    "data" : {
-    "nom": "solitaire",
+    "name": "solitaire",
     "description": "jeu de carte solo plutôt ennuyeux",
-    "url": "https://www.jeu-du-solitaire.com/im/og/jeu-solitaire-classique-gratuit-en-francais.jpg"
-    }
+    "urlimage": "https://www.jeu-du-solitaire.com/im/og/jeu-solitaire-classique-gratuit-en-francais.jpg"
 }
 
 ###
-GET http://localhost:1337/api/free-games/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzAxNzczOTc2LCJleHAiOjE3MDQzNjU5NzZ9.jx2rWuj8xGnlOEYzP-8yQdRWrPeksRyzmDXJQimf41U
+GET http://localhost:3333/api/free-games/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InpjdHl1IiwiZW1haWwiOiJ6ZS5jaGVtbkBnbWFpbC5jb20iLCJpYXQiOjE3MDE5NTU1NzgsImV4cCI6MTcwMTk1OTE3OH0.wVi0p-1OIXM7QG_fbh6Hhe2Oz6TeNWyiVVUvhXcCu48
 
 ###
 GET http://localhost:1337/api/free-games/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzAxNzczOTc2LCJleHAiOjE3MDQzNjU5NzZ9.jx2rWuj8xGnlOEYzP-8yQdRWrPeksRyzmDXJQimf41U
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InpjdHl1IiwiZW1haWwiOiJ6ZS5jaGVtbkBnbWFpbC5jb20iLCJpYXQiOjE3MDE5NTU1NzgsImV4cCI6MTcwMTk1OTE3OH0.wVi0p-1OIXM7QG_fbh6Hhe2Oz6TeNWyiVVUvhXcCu48
 
 
 ###
-PUT http://localhost:1337/api/free-games/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzAxNzczOTc2LCJleHAiOjE3MDQzNjU5NzZ9.jx2rWuj8xGnlOEYzP-8yQdRWrPeksRyzmDXJQimf41U
+PUT http://localhost:3333/api/free-games/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InpjdHl1IiwiZW1haWwiOiJ6ZS5jaGVtbkBnbWFpbC5jb20iLCJpYXQiOjE3MDE5NTU1NzgsImV4cCI6MTcwMTk1OTE3OH0.wVi0p-1OIXM7QG_fbh6Hhe2Oz6TeNWyiVVUvhXcCu48
 Content-Type: application/json
 
 {
@@ -64,35 +63,33 @@ Content-Type: application/json
 
 ###
 DELETE http://localhost:1337/api/free-games/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzAxNzczOTc2LCJleHAiOjE3MDQzNjU5NzZ9.jx2rWuj8xGnlOEYzP-8yQdRWrPeksRyzmDXJQimf41U
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InpjdHl1IiwiZW1haWwiOiJ6ZS5jaGVtbkBnbWFpbC5jb20iLCJpYXQiOjE3MDE5NTU1NzgsImV4cCI6MTcwMTk1OTE3OH0.wVi0p-1OIXM7QG_fbh6Hhe2Oz6TeNWyiVVUvhXcCu48
 
 
 ###
-POST http://localhost:1337/api/official-games/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzAxNzczOTc2LCJleHAiOjE3MDQzNjU5NzZ9.jx2rWuj8xGnlOEYzP-8yQdRWrPeksRyzmDXJQimf41U
+POST http://localhost:3333/api/official-games/
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InpjdHl1IiwiZW1haWwiOiJ6ZS5jaGVtbkBnbWFpbC5jb20iLCJpYXQiOjE3MDE5NTU1NzgsImV4cCI6MTcwMTk1OTE3OH0.wVi0p-1OIXM7QG_fbh6Hhe2Oz6TeNWyiVVUvhXcCu48
 
 {
-    "data" : {
-    "nom": "valorant",
+    "name": "valorant",
     "description": "fps",
-    "url": "https://img.redbull.com/images/c_limit,w_1500,h_1000,f_auto,q_auto/redbullcom/2020/6/5/ctsejxmdtw9inp8zqqqd/valorant-ameliorer-aim-visee-astuces",
-    "prix": 9.99
-    }
+    "urlimage": "https://img.redbull.com/images/c_limit,w_1500,h_1000,f_auto,q_auto/redbullcom/2020/6/5/ctsejxmdtw9inp8zqqqd/valorant-ameliorer-aim-visee-astuces",
+    "price": 9.99
 }
 
-###
-GET http://localhost:1337/api/official-games/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzAxNzczOTc2LCJleHAiOjE3MDQzNjU5NzZ9.jx2rWuj8xGnlOEYzP-8yQdRWrPeksRyzmDXJQimf41U
+###     
+GET http://localhost:3333/api/official-games/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InpjdHl1IiwiZW1haWwiOiJ6ZS5jaGVtbkBnbWFpbC5jb20iLCJpYXQiOjE3MDE5NTU1NzgsImV4cCI6MTcwMTk1OTE3OH0.wVi0p-1OIXM7QG_fbh6Hhe2Oz6TeNWyiVVUvhXcCu48
 
 ###
 GET http://localhost:1337/api/official-games/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzAxNzczOTc2LCJleHAiOjE3MDQzNjU5NzZ9.jx2rWuj8xGnlOEYzP-8yQdRWrPeksRyzmDXJQimf41U
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InpjdHl1IiwiZW1haWwiOiJ6ZS5jaGVtbkBnbWFpbC5jb20iLCJpYXQiOjE3MDE5NTU1NzgsImV4cCI6MTcwMTk1OTE3OH0.wVi0p-1OIXM7QG_fbh6Hhe2Oz6TeNWyiVVUvhXcCu48
 
 
 ###
 PUT http://localhost:1337/api/official-games/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzAxNzczOTc2LCJleHAiOjE3MDQzNjU5NzZ9.jx2rWuj8xGnlOEYzP-8yQdRWrPeksRyzmDXJQimf41U
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InpjdHl1IiwiZW1haWwiOiJ6ZS5jaGVtbkBnbWFpbC5jb20iLCJpYXQiOjE3MDE5NTU1NzgsImV4cCI6MTcwMTk1OTE3OH0.wVi0p-1OIXM7QG_fbh6Hhe2Oz6TeNWyiVVUvhXcCu48
 Content-Type: application/json
 
 {

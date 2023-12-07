@@ -12,21 +12,29 @@ app.use(bodyParser.json());
 const port = parseInt(process.env.PORT as string);
 const jwtSecretToken = process.env.JWT_TOKEN_KEY as string
 
-const authentificateToken = (req: any, res: any, next: any) => {
+const authentificateToken = async (req: any, res: any, next: any) => {
   const tokenHeader = req.headers.authorization
-  const token = tokenHeader.split(' ')[1]
-
-  if (tokenHeader === null) {
+  console.log('Token Header:', tokenHeader);
+  if (!tokenHeader) {
     return res.status(400).json({message: 'Token inexistant'})
   }
-
-  jwt.verify(token, jwtSecretToken, (err: any, user: any) => {
-    if (err) {
-      return res.status(401)
+  const token = tokenHeader.split(' ')[1]
+  console.log('Token extrait:', token);
+  
+  try {
+    const decoded = jwt.verify(token, jwtSecretToken) as { email: string }
+    if (!decoded) {
+      res.status(401)
     }
-    req.user = user;
-    next()
-  })
+    else {
+      const user = await User.findOne({where: {email: decoded.email}})
+      req.user = user;
+      next()
+    }
+  }
+  catch(e){
+    res.status(401)
+  }
 }
 
 const sequelize = new Sequelize({
@@ -166,7 +174,6 @@ app.post('/api/auth/local/', async(req, res) => {
       } else {
         if (!jwtSecretToken) {
           console.error('La clé secrète JWT n\'est pas définie.');
-          process.exit(1); // Quitter l'application en cas de clé secrète manquante
         }
         //@ts-ignore
         const token = jwt.sign({username: user.username, email: user.email}, jwtSecretToken, {expiresIn: '1h'});
@@ -199,7 +206,7 @@ app.delete('http://localhost:3333/users/logout', authentificateToken, async (req
 })
 
 // récupération des info user connecté
-app.get('https://localhost:3333/users/', authentificateToken, async(req, res) => {
+app.get('/api/users/me/', authentificateToken, async(req, res) => {
   
   try {
     //@ts-ignore  
@@ -243,7 +250,7 @@ app.put('http://localhost:3333/users/change-password', authentificateToken, asyn
 })
 
 // créer un nouveau jeu gratuit
-app.post('http://localhost:3333/freegames/', async(req, res) => {
+app.post('/api/free-games/', async(req, res) => {
   try {
     let {name, description, urlimage} = req.body as IRequestFreeGamesBody;
   
@@ -259,7 +266,7 @@ app.post('http://localhost:3333/freegames/', async(req, res) => {
 });
 
 // récupérer tous les jeux
-app.get('http://localhost:3333/freegames/', async(_, res) => {
+app.get('/api/free-games/', async(_, res) => {
   try {
     const allFreeGames = await FreeGames.findAll();
     res.status(200).json(allFreeGames);
@@ -300,7 +307,7 @@ app.put('http://localhost:3333/freegames/:id', authentificateToken, async(req, r
 })
 
 // détruire un jeu gratuit
-app.delete('http://localhost:3333/freegames/:name', authentificateToken, async(req, res) => {
+app.delete('/freegames/:name', authentificateToken, async(req, res) => {
   try {
     await FreeGames.destroy({
     where: {
@@ -314,11 +321,12 @@ app.delete('http://localhost:3333/freegames/:name', authentificateToken, async(r
 })
 
 // créer un jeu payant
-app.post('http://localhost:3333/officialgames/', authentificateToken, async(req, res) => {
+app.post('/api/official-games/', authentificateToken, async(req, res) => {
+
   try {
     let {name, description, urlimage, price} = req.body as IRequestOfficialGamesBody;
   
-    const newOfficialGames = await FreeGames.create({
+    const newOfficialGames = await OfficialGames.create({
       name,
       description,
       urlimage,
@@ -327,13 +335,18 @@ app.post('http://localhost:3333/officialgames/', authentificateToken, async(req,
     res.status(200).json(newOfficialGames);
   } catch (error) {
     console.error('Erreur création jeu payant', error)
+    res.status(400).json({ message: 'error on create' })
   }
 });
 
 // récupérer tous les jeux payants
-app.get('http://localhost:3333/officialgames/', authentificateToken, async(_, res) => {
+app.get('/api/official-games/', authentificateToken, async(_, res) => {
+  console.log('toto');
+  
   try {
     const allOfficialGames = await OfficialGames.findAll();
+  console.log('toto2');
+
     res.status(200).json(allOfficialGames);
   } catch (error) {
     console.error('Erreur récupération jeux payants', error);
