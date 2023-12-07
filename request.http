@@ -1,0 +1,107 @@
+POST http://localhost:3333/api/auth/local/register
+Content-Type: application/json
+
+{
+    "email": "ze.chemn@gmail.com",
+    "username": "zctyu",
+    "password": "Azerty1234"
+}
+
+###
+POST http://localhost:3333/api/auth/local/
+Content-Type: application/json
+
+{
+    "email": "ze.chemn@gmail.com",
+    "password": "Azerty1234"
+}
+
+###
+GET http://localhost:1337/api/users/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzAxNzczOTc2LCJleHAiOjE3MDQzNjU5NzZ9.jx2rWuj8xGnlOEYzP-8yQdRWrPeksRyzmDXJQimf41U
+
+###
+POST http://localhost:1337/api/auth/forgot-password/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzAxNzczOTc2LCJleHAiOjE3MDQzNjU5NzZ9.jx2rWuj8xGnlOEYzP-8yQdRWrPeksRyzmDXJQimf41U
+Content-Type: application/json
+
+{
+    "email": "ze.chemn@gmail.com"
+}
+
+###
+POST http://localhost:1337/api/free-games/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzAxNzczOTc2LCJleHAiOjE3MDQzNjU5NzZ9.jx2rWuj8xGnlOEYzP-8yQdRWrPeksRyzmDXJQimf41U
+Content-Type: application/json
+
+{
+    "data" : {
+    "nom": "solitaire",
+    "description": "jeu de carte solo plutôt ennuyeux",
+    "url": "https://www.jeu-du-solitaire.com/im/og/jeu-solitaire-classique-gratuit-en-francais.jpg"
+    }
+}
+
+###
+GET http://localhost:1337/api/free-games/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzAxNzczOTc2LCJleHAiOjE3MDQzNjU5NzZ9.jx2rWuj8xGnlOEYzP-8yQdRWrPeksRyzmDXJQimf41U
+
+###
+GET http://localhost:1337/api/free-games/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzAxNzczOTc2LCJleHAiOjE3MDQzNjU5NzZ9.jx2rWuj8xGnlOEYzP-8yQdRWrPeksRyzmDXJQimf41U
+
+
+###
+PUT http://localhost:1337/api/free-games/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzAxNzczOTc2LCJleHAiOjE3MDQzNjU5NzZ9.jx2rWuj8xGnlOEYzP-8yQdRWrPeksRyzmDXJQimf41U
+Content-Type: application/json
+
+{
+    "data": {
+        "nom": "jeu du solitaire"
+    }
+}
+
+###
+DELETE http://localhost:1337/api/free-games/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzAxNzczOTc2LCJleHAiOjE3MDQzNjU5NzZ9.jx2rWuj8xGnlOEYzP-8yQdRWrPeksRyzmDXJQimf41U
+
+
+###
+POST http://localhost:1337/api/official-games/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzAxNzczOTc2LCJleHAiOjE3MDQzNjU5NzZ9.jx2rWuj8xGnlOEYzP-8yQdRWrPeksRyzmDXJQimf41U
+Content-Type: application/json
+
+{
+    "data" : {
+    "nom": "valorant",
+    "description": "fps",
+    "url": "https://img.redbull.com/images/c_limit,w_1500,h_1000,f_auto,q_auto/redbullcom/2020/6/5/ctsejxmdtw9inp8zqqqd/valorant-ameliorer-aim-visee-astuces",
+    "prix": 9.99
+    }
+}
+
+###
+GET http://localhost:1337/api/official-games/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzAxNzczOTc2LCJleHAiOjE3MDQzNjU5NzZ9.jx2rWuj8xGnlOEYzP-8yQdRWrPeksRyzmDXJQimf41U
+
+###
+GET http://localhost:1337/api/official-games/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzAxNzczOTc2LCJleHAiOjE3MDQzNjU5NzZ9.jx2rWuj8xGnlOEYzP-8yQdRWrPeksRyzmDXJQimf41U
+
+
+###
+PUT http://localhost:1337/api/official-games/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzAxNzczOTc2LCJleHAiOjE3MDQzNjU5NzZ9.jx2rWuj8xGnlOEYzP-8yQdRWrPeksRyzmDXJQimf41U
+Content-Type: application/json
+
+{
+    "data": {
+        "nom": "Valorant",
+        "description": "FPS"
+    }
+}
+
+###
+DELETE http://localhost:1337/api/official-games/2
+Authorization: Bearer 1e9d062fc1447729c35b8b6d9a19529f22ec00c2df474379a1e99f2d70dae6aa469cc5b308b6132cd7a81b8793826bd8ef9d218fca6f71e5ed73ac3422aece8efb79f9fd8f369377a9c1c80f5358059766fc100f2eb4b94977beddd15a6eaa2301b7287fd6f84e611913a22d095b021431b34ec51d8308455921fbb86e8330e5

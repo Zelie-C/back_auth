@@ -10,6 +10,7 @@ let app = express();
 app.use(cors());
 app.use(bodyParser.json());
 const port = parseInt(process.env.PORT as string);
+const jwtSecretToken = process.env.JWT_TOKEN_KEY as string
 
 const authentificateToken = (req: any, res: any, next: any) => {
   const tokenHeader = req.headers.authorization
@@ -19,7 +20,7 @@ const authentificateToken = (req: any, res: any, next: any) => {
     return res.status(400).json({message: 'Token inexistant'})
   }
 
-  jwt.verify(token, process.env.JWT_TOKEN_KEY as string, (err: any, user: any) => {
+  jwt.verify(token, jwtSecretToken, (err: any, user: any) => {
     if (err) {
       return res.status(401)
     }
@@ -94,7 +95,7 @@ const Tokens = sequelize.define('Tokens', {
 })
 
 User.sync()
-//User.sync({force: true})
+// User.sync({force: true})
 FreeGames.sync()
 //FreeGames.sync({force: true})
 OfficialGames.sync()
@@ -122,29 +123,35 @@ interface IRequestOfficialGamesBody {
 }
 
 // route création utilisateur
-app.post('/users/register', async(req, res) => {
-  const usernameReq = req.body.username;
-  const emailReq = req.body.email;
-  const passwordReq = req.body.password;
+app.post('/api/auth/local/register', async(req, res) => {
+  console.log('body', req.body)
 
-  const uniqueMail = await User.findOne({ where: {email: emailReq}});
-  if (uniqueMail === null) {
-    const saltRounds = 10;
-    const hash = await bcrypt.hash(passwordReq, saltRounds)
+  try {
+    const usernameReq = req.body.username;
+    const emailReq = req.body.email;
+    const passwordReq = req.body.password;
 
-    await User.create({
-      usernameReq,
-      emailReq,
-      hash
-    })
-    res.status(200)
-  } else {
-    return res.status(400)
+    const uniqueMail = await User.findOne({ where: {email: emailReq}});
+    if (uniqueMail === null) {
+      const saltRounds = 10;
+      const hash = await bcrypt.hash(passwordReq, saltRounds)
+
+      await User.create({
+        email: emailReq,
+        username: usernameReq,
+        password: hash
+      })
+      res.status(200).json({message: "L'utilisateur a été crée avec succès"})
+    } else {
+      return res.status(400).json({message: "Le couple email/mot de passe existe déjà"})
+  }} catch (error) {
+    console.error(error);
+    res.status(400).json({message: "l'utilisateur n'a pas pu être crée"})
   }
 })
 
 // route connexion utilisateur
-app.post('/users/auth/', async(req, res) => {
+app.post('/api/auth/local/', async(req, res) => {
   const {email, password} = req.body as IRequestUserBody;
 
   const user = await User.findOne({where: {email}})
@@ -157,8 +164,12 @@ app.post('/users/auth/', async(req, res) => {
       if (!passwordVerification) {
         return res.status(400).json({message: "Le couple email/mot de passe est invalide"})
       } else {
+        if (!jwtSecretToken) {
+          console.error('La clé secrète JWT n\'est pas définie.');
+          process.exit(1); // Quitter l'application en cas de clé secrète manquante
+        }
         //@ts-ignore
-        const token = jwt.sign({username: user.username, email: user.email}, process.env.JWT_SECRET_KEY as string, {expiresIn: '1h'});
+        const token = jwt.sign({username: user.username, email: user.email}, jwtSecretToken, {expiresIn: '1h'});
         await Tokens.create({
           token
         })
